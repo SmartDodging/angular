@@ -17,6 +17,9 @@
                 <td>
                     {{ x.verantwoordelijke }}
                 </td>
+                <td>
+                <button ng-click="finish()" ng-model="taken">afronden</button>
+                </td>
             </tr>
             <tr>
                 <td></td>
@@ -30,35 +33,58 @@
                     </center>
                 </td>
             </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="text" ng-model="addTaak.newTaak">
+                    <button ng-click="create()">Voeg taak toe</button>
+                </td>
+                
+            </tr>
         </table>
-        <p>{{message}}</p>
     </div>
 </center>
 <script>
-    var checkval="";
-    
+    var checkval = "";
     var task = angular.module('getTaken', []);
     task.controller('takenCtrl', ['$scope', '$http', function($scope, $http) {
         $http.get("taken.php")
             .then(function (response) {$scope.taken = response.data.taken;});
-        
+
         $http.get("setperson.php")
             .then(function (response) {$scope.person = response.data.person;});
         
         $scope.selvalTaken = function (tval) {
 			checkval = tval;
 		}
-        
         function bindId(){
         $scope.persoonId = $scope.person.persoonId;
         }
         $scope.save = function(){
             bindId();
             $scope.dataObj = {'persoonId': $scope.persoonId, 'taak': checkval};
+            console.log($scope.dataObj);
             $scope.info = $http.post('save.php', $scope.dataObj);
-            location.reload();
+            console.log($scope.info);
+            //location.reload();
+        }
+        function newTaak(){
+            $scope.makeTaak = $scope.addTaak.newTaak;
+        }
+        $scope.create = function(){
+            newTaak();
+            $scope.dataObj = {'taak': $scope.makeTaak};
+            console.log($scope.dataObj);
+            $scope.info = $http.post('add.php', $scope.dataObj);
+            console.log($scope.info);
+            //location.reload();
         }
         
+        $scope.finish = function(){
+            $scope.dataObj = {'taak': checkval};
+            $scope.info = $http.post('finish.php', $scope.dataObj);
+            //location.reload();
+        }
     }]);
     </script>
 </body>
