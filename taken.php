@@ -1,6 +1,18 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-$conn = new mysqli("localhost","the_avatarum_co", "UDMWWTBG", "the_avatarum_co");
-$result = $conn->query("SELECT taak, verantwoordelijke FROM taken");
-$outp = $result->fetch_all(MYSQLI_ASSOC);
+//setting variables and connecting to the database
+$host = "the-avatarum.com.mysql";
+$dbName = "the_avatarum_co";
+$username = "the_avatarum_co";
+$password = "UDMWWTBG";
+$conn = new PDO("mysql:host=$host;dbname=$dbName", $username, $password);
+
+$sql = "SELECT taak, verantwoordelijke, taakId FROM taken";
+//preparing the sql
+$stmt = $conn->prepare($sql);
+//executing the query
+$stmt->execute();
+//binding the selected data to a variable
+$outp = $stmt->fetchAll();
+//returning the data encoded in json
 echo json_encode(array('taken' => $outp));
